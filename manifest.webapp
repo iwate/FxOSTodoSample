@@ -1,0 +1,21 @@
+{
+  "name": "TodoSample",
+  "description": "A Hello World app",
+  "launch_path": "/index.html",
+  "icons": {
+    "16": "/icons/icon16x16.png",
+    "48": "/icons/icon48x48.png",
+    "60": "/icons/icon60x60.png",
+    "128": "/icons/icon128x128.png"
+  },
+  "origin": "app://fxos.contoso.com",
+  "type": "privileged",
+  "permissions": {
+    "systemXHR": {
+      "description": "Required to download podcasts."
+    },
+      "browser":{
+        "description": "Required to download podcasts."
+      }
+  }
+}
