@@ -1,6 +1,6 @@
 $(function() {
     console.log(window.location);
-    var client = new WindowsAzure.MobileServiceClient("https://FxOS.azure-mobile.net/","GJciXjotKHYNiEONAgoGGRcKvolUzD75");
+    var client = new WindowsAzure.MobileServiceClient("https://fxos.azure-mobile.net/","GJciXjotKHYNiEONAgoGGRcKvolUzD75");
     var todoItemTable = client.getTable('todoitem');
 
     // Read current data and rebuild UI.
@@ -31,6 +31,29 @@ $(function() {
     function getTodoItemId(formElement) {
         return $(formElement).closest('li').attr('data-todoitem-id');
     }
+    
+    function refreshAuthDisplay() {
+        var isLoggedIn = client.currentUser !== null;
+        $("#logged-in").toggle(isLoggedIn);
+        $("#logged-out").toggle(!isLoggedIn);
+
+        if (isLoggedIn) {
+            $("#login-name").text(client.currentUser.userId);
+            refreshTodoItems();
+        }
+    }
+
+    function logIn() {
+        client.login("facebook").then(refreshAuthDisplay, function(error){
+            alert(error);
+        });
+    }
+
+    function logOut() {
+        client.logout();
+        refreshAuthDisplay();
+        $('#summary').html('<strong>You must login to access data.</strong>');
+    }
 
     // Handle insert
     $('#add-item').submit(function(evt) {
@@ -58,7 +81,14 @@ $(function() {
     $(document.body).on('click', '.item-delete', function () {
         todoItemTable.del({ id: getTodoItemId(this) }).then(refreshTodoItems, handleError);
     });
-
+    
+    // On page init, fetch the data and set up event handlers
+    refreshAuthDisplay();
+    $('#summary').html('<strong>You must login to access data.</strong>');          
+    $("#logged-out button").click(logIn);
+    $("#logged-in button").click(logOut);
+    
     // On initial load, start by fetching the current data
     refreshTodoItems();
+    
 });
